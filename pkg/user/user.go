@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"aws-lambda-tutorial/pkg/validators"
+	"serverless_function_golang/pkg/validators"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
@@ -29,6 +29,17 @@ type User struct {
 	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
+}
+
+/*
+Software is just a struct to hold the basic components of a piece of software
+that'd be searchable terms on a software retailer database.
+*/
+type Software struct {
+	Name        string `json:"name"`
+	Author      string `json:"author"`
+	Platform    string `json:"platform"`
+	ReleaseYear string `json:"releaseYear"`
 }
 
 func FetchUser(email, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*User, error) {

@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"aws-lambda-tutorial/pkg/user"
 	"net/http"
+	"serverless_function_golang/pkg/user"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"

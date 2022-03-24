@@ -1,8 +1,8 @@
 package main
 
 import (
-	"aws-lambda-tutorial/pkg/handlers"
 	"os"
+	"serverless_function_golang/pkg/handlers"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"

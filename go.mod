@@ -1,4 +1,4 @@
-module aws-lambda-tutorial
+module serverless_function_golang
 
 go 1.13
 
