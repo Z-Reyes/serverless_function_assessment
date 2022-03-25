@@ -1,5 +1,9 @@
 terraform {
   required_providers {
+    null = {
+      source = "hashicorp/null"
+      version = "3.1.1"
+    }
     aws = {
       source = "hashicorp/aws"
       version = "~> 2.0"
@@ -15,10 +19,20 @@ provider "aws" {
   region  = "us-west-2"
 }
 
+resource "null_resource" "compile" {
+  triggers = {
+    build_number = "${timestamp()}"
+  }
+  provisioner "local-exec" {
+    command = "GOOS=linux go build -o ../bin/main ../cmd/main.go"
+  } 
+}
+
 data "archive_file" "zip" {
     type = "zip"
-    source_file = "../build/main"
-    output_path = "../build/main.zip"
+    source_file = "../bin/main"
+    output_path = "../bin/main.zip"
+    depends_on = [null_resource.compile]
 }
 
 resource "aws_lambda_function" "zach_test_function" {
@@ -60,7 +74,7 @@ resource "aws_api_gateway_rest_api" "api" {
 }
 
 resource "aws_api_gateway_resource" "resource" {
-  path_part   = "{requestId}"
+  path_part   = "{requestip}"
   parent_id   = "${aws_api_gateway_rest_api.api.root_resource_id}"
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
 }
@@ -91,7 +105,7 @@ resource "aws_api_gateway_integration" "integration" {
 
 resource "aws_api_gateway_integration" "default_integration" {
   rest_api_id             = "${aws_api_gateway_rest_api.api.id}"
-  resource_id             = "${aws_api_gateway_resource.resource.id}"
+  resource_id             = "${aws_api_gateway_rest_api.api.root_resource_id}"
   http_method             = "${aws_api_gateway_method.default_method.http_method}"
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -109,20 +123,12 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
 
 resource "aws_api_gateway_deployment" "zach_deploy" {
-  depends_on = [aws_api_gateway_integration.integration]
+  depends_on = [aws_api_gateway_integration.integration, aws_api_gateway_integration.default_integration]
 
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
   stage_name  = "v1"
-}
-
-resource "aws_api_gateway_deployment" "default_zach_deploy" {
-  depends_on = [aws_api_gateway_integration.default_integration]
-
-  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
-  stage_name  = "v1"
-
 }
 
 output "url" {
-  value = "${aws_api_gateway_deployment.zach_deploy.invoke_url}${aws_api_gateway_resource.resource.path}"
+  value = "${aws_api_gateway_deployment.zach_deploy.invoke_url}"
 }

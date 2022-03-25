@@ -25,6 +25,7 @@ github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
+github.com/likexian/gokit v0.25.6 h1:DZuMrmfgXErhdfI9SIS6tVMZ5QbRMP3aruHNq5lGcMI=
 github.com/likexian/gokit v0.25.6/go.mod h1:q1LC+z3cBymJuE4oeiWiIPhJceUa0nptg4Id8tSzjZI=
 github.com/likexian/whois v1.12.5 h1:8T0M13RUIx3nYVrn4lnInUfFs2/BUvmQShHgarDF4O0=
 github.com/likexian/whois v1.12.5/go.mod h1:SfdfmB72mSdrC/8eLjYkeaEJp9t1MPAgp0ebCzZfYXw=

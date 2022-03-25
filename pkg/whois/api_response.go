@@ -1,4 +1,4 @@
-package whoishandler
+package whois
 
 import (
 	"encoding/json"
@@ -10,7 +10,11 @@ func apiResponse(status int, body interface{}) (*events.APIGatewayProxyResponse,
 	resp := events.APIGatewayProxyResponse{Headers: map[string]string{"Content-Type": "application/json"}}
 	resp.StatusCode = status
 
-	stringBody, _ := json.Marshal(body)
-	resp.Body = string(stringBody)
+	stringBody, err := json.Marshal(body)
+	if err == nil {
+		resp.Body = string(stringBody)
+	} else {
+		resp.Body = "Interface data could not be parsed."
+	}
 	return &resp, nil
 }
