@@ -20,10 +20,10 @@ Once the server is started, you can access it either by using 'curl' or insertin
 
 If you merely insert the url into either the command or browser, the function will return a WhoIS call on your IP address, by default.
 
-If you insert an IP address at the end of the url as a path parameter (i.e.: <URl>/<IP Address>) the function will return a WhoIS call on the specified IP address.
+If you insert an IP address at the end of the url as a path parameter (i.e.: \<URl\>/\<IP Address\>) the function will return a WhoIS call on the specified IP address.
 Input is scanned for invalid values.
 
-Since WhoIS calls can return a lot of data, and at this point I do nothing to format them, there's an additional query parameter you can add at the end of your resource
+Since WhoIS calls can return a lot of data, and at this point I do nothing to format it, there's an additional query parameter you can add at the end of your resource
 to 'trim' the amount of returned data. To make use of this, add a "?trim=true" to the end of your resource. This works regardless of if a path parameter was called.
 
 As of right now, the trimming functionality is very specific to the string of data being passed. Specifically, it searches for key words to retrieve certain pieces of data.
@@ -82,9 +82,9 @@ After I got my footing a little more, I went with more formalized testing.
 CREDITS
 
 Big shoutout to Youtube and various individuals on the internet for helping me 
-1. Learn what REST is
-2. Learn how to set up an AWS lambda server
-3. How to interface with AWS proxies for AWS APIGateway
+1. Learn what REST is.
+2. Learn how to set up an AWS lambda server.
+3. How to interface with AWS proxies for AWS APIGateway.
 4. How to create a terraform configuration to automate the whole process.
 
 I'll put some of the tutorials I relied on the most below. Admittedly, some of their code did end up in my final project. I went through and annotated them as necessary
