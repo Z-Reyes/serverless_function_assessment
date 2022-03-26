@@ -16,5 +16,5 @@ func apiResponse(status int, body interface{}) (*events.APIGatewayProxyResponse,
 	} else {
 		resp.Body = "Interface data could not be parsed."
 	}
-	return &resp, nil
+	return &resp, err
 }

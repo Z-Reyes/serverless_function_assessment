@@ -1,3 +1,7 @@
+/*
+whois package is a simple library that links AWS event calls to WhoIS calls for returning IP address information.
+The whois package also parses path and query parameters to return the correct IP address information.
+*/
 package whois
 
 import (
@@ -66,7 +70,7 @@ func Ip(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse,
 	//Check if query parameter exists. If it does, trim data.
 	if val, ok := req.QueryStringParameters[queryParam]; ok {
 		if len(val) > 0 && val == "true" {
-			return apiResponse(http.StatusOK, trimWhoIs(result))
+			return apiResponse(http.StatusOK, trimWhoIs(result, regexOrg, regexAddr, regexRange))
 		}
 	}
 	return apiResponse(http.StatusOK, result)
@@ -81,27 +85,38 @@ func isValidIpAddress(ip string) bool {
 	return !(isIP.IsPrivate())
 }
 
-func trimWhoIs(input string) trimmedWhoIs {
+func trimWhoIs(input string, regexOrg string, regexAddr string, regexRange string) trimmedWhoIs {
 	//Retrieve 3 pieces of information: Organization, Netrange, address
 	var trimmed trimmedWhoIs
+
 	r, err := regexp.Compile(regexOrg)
 	if err != nil {
 		trimmed.Org = "REGEX ERR: Organization expression could not be compiled."
+	} else {
+		trimmed.Org = r.FindString(input)
 	}
-	trimmed.Org = r.FindString(input)
+
 	r, err = regexp.Compile(regexAddr)
 	if err != nil {
 		trimmed.Addr = "REGEX ERR: Address expression could not be compiled."
+	} else {
+		trimmed.Addr = r.FindString(input)
 	}
-	trimmed.Addr = r.FindString(input)
+
 	r, err = regexp.Compile(regexRange)
 	if err != nil {
-		trimmed.AddrRange = "REGEX ERR: Network Range expression could not be compiled."
+		trimmed.AddrRange = "REGEX ERR: Network Address expression could not be compiled."
+	} else {
+		trimmed.AddrRange = r.FindString(input)
 	}
-	trimmed.AddrRange = r.FindString(input)
-	if trimmed.Org == "" && trimmed.Addr == "" && trimmed.AddrRange == "" {
+
+	if trimmed.Org == "" {
 		trimmed.Org = "OrgName token not found."
+	}
+	if trimmed.Addr == "" {
 		trimmed.Addr = "Address token not found."
+	}
+	if trimmed.AddrRange == "" {
 		trimmed.AddrRange = "Network Address token not found."
 	}
 	return trimmed

@@ -1,3 +1,4 @@
+##### High Level Configuration Options #####
 terraform {
   required_providers {
     null = {
@@ -19,6 +20,9 @@ provider "aws" {
   region  = "us-west-2"
 }
 
+
+##### Resources to compile and zip executable for uploading to AWS lambda #####
+
 resource "null_resource" "compile" {
   triggers = {
     build_number = "${timestamp()}"
@@ -35,6 +39,7 @@ data "archive_file" "zip" {
     depends_on = [null_resource.compile]
 }
 
+##### Define inputs and specifications for AWS lambda instance #####
 resource "aws_lambda_function" "zach_test_function" {
     function_name = "zach_test_function"
     handler = "main"
@@ -45,6 +50,9 @@ resource "aws_lambda_function" "zach_test_function" {
     memory_size = 128
     timeout = 10
 }
+
+
+##### Create IAM role for lambda instance #####
 
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
@@ -67,18 +75,20 @@ EOF
 }
 
 
-
+##### Create APIGateway API #####
 resource "aws_api_gateway_rest_api" "api" {
   name = "zach_test_api"
   endpoint_configuration {types = ["REGIONAL"]}
 }
 
+##### Define new API Gateway resource (this is used for a path parameter) #####
 resource "aws_api_gateway_resource" "resource" {
   path_part   = "{requestip}"
   parent_id   = "${aws_api_gateway_rest_api.api.root_resource_id}"
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
 }
 
+##### Define GET methods for both existing resources #####
 resource "aws_api_gateway_method" "method" {
   rest_api_id   = "${aws_api_gateway_rest_api.api.id}"
   resource_id   = "${aws_api_gateway_resource.resource.id}"
@@ -93,7 +103,7 @@ resource "aws_api_gateway_method" "default_method" {
   authorization = "NONE"
 }
 
-
+##### Integrate methods into appropriate resources #####
 resource "aws_api_gateway_integration" "integration" {
   rest_api_id             = "${aws_api_gateway_rest_api.api.id}"
   resource_id             = "${aws_api_gateway_resource.resource.id}"
@@ -122,6 +132,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
 }
 
 
+##### Deploy resources and methods to API Gateway #####
 resource "aws_api_gateway_deployment" "zach_deploy" {
   depends_on = [aws_api_gateway_integration.integration, aws_api_gateway_integration.default_integration]
 
